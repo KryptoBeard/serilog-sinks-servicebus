@@ -14,18 +14,25 @@ namespace Serilog.Sinks.ServiceBus.Sinks
     {
         readonly ServiceBusClient _client;
         readonly ServiceBusSender _sender;
-        readonly IFormatProvider? _formatProvider;
+        readonly ITextFormatter _formatter;
 
-        public ServiceBusSink(ServiceBusClient client, string queueName, IFormatProvider? formatProvider = null)
+        public ServiceBusSink(ServiceBusClient client, string queueName, ITextFormatter formatter )
         {
-            _formatProvider = formatProvider;
+            _formatter = formatter;
             _client = client;
             _sender = _client.CreateSender(queueName);
         }
 
         public void Emit(LogEvent logEvent)
         {
-            var message = new ServiceBusMessage(Encoding.UTF8.GetBytes(logEvent.RenderMessage(_formatProvider)));
+            byte[] body;
+            using (var render = new StringWriter())
+            {
+                _formatter.Format(logEvent, render);
+                body = Encoding.UTF8.GetBytes(render.ToString());
+            }
+
+            var message = new ServiceBusMessage(body);
             _sender.SendMessageAsync(message).GetAwaiter().GetResult();     
         }
     }

@@ -21,15 +21,15 @@ namespace Serilog.Sinks.ServiceBus
             this LoggerSinkConfiguration sinkConfiguration,
             string connectionString,
             string queueName,
+            ITextFormatter textFormatter,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            IFormatProvider? formatProvider = null,
             LoggingLevelSwitch? levelSwitch = null)
         {
             if (sinkConfiguration is null) throw new ArgumentNullException(nameof(sinkConfiguration));
 
             var client = new ServiceBusClient(connectionString);
 
-            return sinkConfiguration.Sink(new ServiceBusSink(client, queueName, formatProvider), restrictedToMinimumLevel, levelSwitch);
+            return sinkConfiguration.Sink(new ServiceBusSink(client, queueName, textFormatter), restrictedToMinimumLevel, levelSwitch);
         }
 
         public static LoggerConfiguration ServiceBus(
@@ -37,16 +37,16 @@ namespace Serilog.Sinks.ServiceBus
         string nameSpace,
         string queueName,
         TokenCredential? tokenCredential,
+        ITextFormatter textFormatter,
         LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-        IFormatProvider? formatProvider = null,
         LoggingLevelSwitch? levelSwitch = null)
         {
             if (sinkConfiguration is null) throw new ArgumentNullException(nameof(sinkConfiguration));
-            if(tokenCredential == null) throw new ArgumentNullException(nameof(tokenCredential));
+            if (tokenCredential == null) throw new ArgumentNullException(nameof(tokenCredential));
 
             var client = new ServiceBusClient(nameSpace, tokenCredential);
 
-            return sinkConfiguration.Sink(new ServiceBusSink(client,queueName,formatProvider),restrictedToMinimumLevel,levelSwitch);
+            return sinkConfiguration.Sink(new ServiceBusSink(client, queueName, textFormatter), restrictedToMinimumLevel, levelSwitch);
         }
 
     }
