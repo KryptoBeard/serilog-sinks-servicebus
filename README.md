@@ -1,5 +1,11 @@
 # serilog-sinks-servicebus
 
+![alt text](https://img.shields.io/nuget/v/Serilog.Sinks.ServiceBus)
+
+```
+dotnet add package Serilog.Sinks.ServiceBus --version 1.0.4
+```
+
 ### With Connection string
 ```c#
 var log = new LoggerConfiguration()
