@@ -17,21 +17,46 @@ namespace Serilog.Sinks.ServiceBus
 {
     public static class ServiceBusConfigurationExtensions
     {
+        /// <summary>
+        /// Add a sink that writes log events as messages to an Azure Service Bus queue.
+        /// </summary>
+        /// <param name="sinkConfiguration"></param>
+        /// <param name="connectionString"></param>
+        /// <param name="queueName"></param>
+        /// <param name="textFormatter"></param>
+        /// <param name="restrictedToMinimumLevel"></param>
+        /// <param name="levelSwitch"></param>
+        /// <param name="ignorePropertyName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static LoggerConfiguration ServiceBus(
             this LoggerSinkConfiguration sinkConfiguration,
             string connectionString,
             string queueName,
             ITextFormatter textFormatter,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch? levelSwitch = null)
+            LoggingLevelSwitch? levelSwitch = null,
+            string? pushOnlyWithProperty = null)
         {
             if (sinkConfiguration is null) throw new ArgumentNullException(nameof(sinkConfiguration));
 
             var client = new ServiceBusClient(connectionString);
 
-            return sinkConfiguration.Sink(new ServiceBusSink(client, queueName, textFormatter), restrictedToMinimumLevel, levelSwitch);
+            return sinkConfiguration.Sink(new ServiceBusSink(client, queueName, textFormatter, pushOnlyWithProperty), restrictedToMinimumLevel, levelSwitch);
         }
-
+        /// <summary>
+        /// Add a sink that writes log events as messages to an Azure Service Bus queue.
+        /// </summary>
+        /// <param name="sinkConfiguration"></param>
+        /// <param name="nameSpace"></param>
+        /// <param name="queueName"></param>
+        /// <param name="tokenCredential"></param>
+        /// <param name="textFormatter"></param>
+        /// <param name="restrictedToMinimumLevel"></param>
+        /// <param name="levelSwitch"></param>
+        /// <param name="ignorePropertyName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static LoggerConfiguration ServiceBus(
         this LoggerSinkConfiguration sinkConfiguration,
         string nameSpace,
@@ -39,14 +64,15 @@ namespace Serilog.Sinks.ServiceBus
         TokenCredential? tokenCredential,
         ITextFormatter textFormatter,
         LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-        LoggingLevelSwitch? levelSwitch = null)
+        LoggingLevelSwitch? levelSwitch = null,
+        string? pushOnlyWithProperty = null)
         {
             if (sinkConfiguration is null) throw new ArgumentNullException(nameof(sinkConfiguration));
             if (tokenCredential == null) throw new ArgumentNullException(nameof(tokenCredential));
 
             var client = new ServiceBusClient(nameSpace, tokenCredential);
 
-            return sinkConfiguration.Sink(new ServiceBusSink(client, queueName, textFormatter), restrictedToMinimumLevel, levelSwitch);
+            return sinkConfiguration.Sink(new ServiceBusSink(client, queueName, textFormatter, pushOnlyWithProperty), restrictedToMinimumLevel, levelSwitch);
         }
 
     }
