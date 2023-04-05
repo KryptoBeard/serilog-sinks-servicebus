@@ -26,7 +26,7 @@ namespace Serilog.Sinks.ServiceBus.Sinks
 
         public void Emit(LogEvent logEvent)
         {
-            if (ShouldPush(logEvent)) return;
+            if (!ShouldPush(logEvent)) return;
 
             byte[] body;
             using (var render = new StringWriter())

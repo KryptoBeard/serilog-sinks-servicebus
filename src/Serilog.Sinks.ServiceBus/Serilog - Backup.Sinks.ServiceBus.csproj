@@ -7,7 +7,6 @@
     <Version>1.0.4</Version>
     <PackageProjectUrl>https://github.com/KryptoBeard/serilog-sinks-servicebus</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KryptoBeard/serilog-sinks-servicebus</RepositoryUrl>
-    <Description>Serilog Sink for Azure Service Bus. Supports managed identity.</Description>
   </PropertyGroup>
 
   <ItemGroup>
