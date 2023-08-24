@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <PackageProjectUrl>https://github.com/KryptoBeard/serilog-sinks-servicebus</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KryptoBeard/serilog-sinks-servicebus</RepositoryUrl>
     <Description>Serilog Sink for Azure Service Bus. Supports managed identity.</Description>

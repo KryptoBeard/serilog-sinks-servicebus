@@ -2,11 +2,7 @@
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Serilog.Sinks.ServiceBus.Sinks
 {
@@ -16,6 +12,8 @@ namespace Serilog.Sinks.ServiceBus.Sinks
         readonly ServiceBusSender _sender;
         readonly ITextFormatter _formatter;
         readonly string? _pushOnlyWithProperty = null;
+        public int LogCount { get; set; } = 0;
+
         public ServiceBusSink(ServiceBusClient client, string queueName, ITextFormatter formatter, string? pushOnlyWithProperty = null)
         {
             _formatter = formatter;
@@ -28,6 +26,8 @@ namespace Serilog.Sinks.ServiceBus.Sinks
         {
             if (!ShouldPush(logEvent)) return;
 
+            if (IsWarmup(logEvent)) return;
+
             byte[] body;
             using (var render = new StringWriter())
             {
@@ -36,7 +36,26 @@ namespace Serilog.Sinks.ServiceBus.Sinks
             }
 
             var message = new ServiceBusMessage(body);
-            _sender.SendMessageAsync(message).GetAwaiter().GetResult();     
+            _sender.SendMessageAsync(message).GetAwaiter().GetResult();
+        }
+
+        private bool IsWarmup(LogEvent logEvent)
+        {
+            try
+            {
+                //Keeps Service bus connection alive;
+                if (logEvent.Properties.TryGetValue("Warmup", out var propertyValue))
+                {
+                    _sender.CreateMessageBatchAsync().GetAwaiter().GetResult();
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                //Eat
+            }
+
+            return false;
         }
 
         /// <summary>
